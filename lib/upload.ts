@@ -4,19 +4,19 @@ import crypto from 'crypto';
 
 const UPLOADS_DIR = path.join(process.cwd(), 'public', 'uploads');
 
-const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
+const MAX_FILE_SIZE = parseInt(process.env.UPLOAD_MAX_FILE_SIZE ?? '', 10) || 10 * 1024 * 1024; // default 10 MB
 
-const ALLOWED_MIME_TYPES = new Set([
-  'image/jpeg',
-  'image/png',
-  'image/gif',
-  'image/webp',
-  'image/svg+xml',
-  'image/avif',
-  'video/mp4',
-  'video/webm',
-  'application/pdf',
-]);
+const MIME_TO_EXT: Record<string, string> = {
+  'image/jpeg': '.jpg',
+  'image/png': '.png',
+  'image/gif': '.gif',
+  'image/webp': '.webp',
+  'image/svg+xml': '.svg',
+  'image/avif': '.avif',
+  'video/mp4': '.mp4',
+  'video/webm': '.webm',
+  'application/pdf': '.pdf',
+};
 
 function ensureUploadsDir() {
   if (!fs.existsSync(UPLOADS_DIR)) {
@@ -36,7 +36,8 @@ function isSafeFilename(filename: string): boolean {
 }
 
 export async function saveFile(file: File): Promise<{ filename: string; url: string }> {
-  if (!ALLOWED_MIME_TYPES.has(file.type)) {
+  const ext = MIME_TO_EXT[file.type];
+  if (!ext) {
     throw new Error(`File type '${file.type}' is not allowed.`);
   }
 
@@ -46,7 +47,6 @@ export async function saveFile(file: File): Promise<{ filename: string; url: str
 
   ensureUploadsDir();
 
-  const ext = path.extname(file.name) || '';
   const filename = `${crypto.randomUUID()}${ext}`;
   const filepath = path.join(UPLOADS_DIR, filename);
 
