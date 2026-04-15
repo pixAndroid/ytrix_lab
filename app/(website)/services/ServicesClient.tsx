@@ -1,103 +1,43 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import {
-  Globe, Smartphone, Brain, Cloud, Palette, Settings,
-  ArrowRight, CheckCircle, Layers, Cpu, ShoppingCart,
+  ArrowRight, CheckCircle, Cpu,
 } from 'lucide-react';
 
-const services = [
-  {
-    icon: Smartphone,
-    title: 'Android App Development',
-    slug: 'android-app-development',
-    desc: 'Native Android apps built with Kotlin and Jetpack Compose for performance and user delight.',
-    features: ['Native Android (Kotlin)', 'Material Design 3', 'Push Notifications', 'Offline Support', 'Play Store Publishing'],
-    color: 'from-green-500 to-emerald-600',
-    bg: 'bg-emerald-50',
-    text: 'text-emerald-600',
-  },
-  {
-    icon: Smartphone,
-    title: 'iOS App Development',
-    slug: 'ios-app-development',
-    desc: 'Beautiful iOS apps with Swift and SwiftUI following Apple Human Interface Guidelines.',
-    features: ['Native iOS (Swift)', 'SwiftUI Interface', 'App Store Publishing', 'Apple Pay', 'Face ID Integration'],
-    color: 'from-blue-500 to-sky-600',
-    bg: 'bg-blue-50',
-    text: 'text-blue-600',
-  },
-  {
-    icon: Globe,
-    title: 'Web Development',
-    slug: 'web-development',
-    desc: 'Scalable web applications using Next.js, React, Node.js, and modern tech stacks.',
-    features: ['Next.js / React', 'Node.js Backend', 'REST/GraphQL APIs', 'SEO Optimized', 'Performance Focused'],
-    color: 'from-violet-500 to-purple-600',
-    bg: 'bg-violet-50',
-    text: 'text-violet-600',
-  },
-  {
-    icon: Layers,
-    title: 'SaaS Development',
-    slug: 'saas-development',
-    desc: 'Build scalable Software-as-a-Service products with multi-tenancy, billing, and analytics.',
-    features: ['Multi-tenant Architecture', 'Subscription Billing', 'Analytics Dashboard', 'API Integrations', 'White-label Options'],
-    color: 'from-amber-500 to-orange-600',
-    bg: 'bg-amber-50',
-    text: 'text-amber-600',
-  },
-  {
-    icon: Palette,
-    title: 'UI/UX Design',
-    slug: 'ui-ux-design',
-    desc: 'Design-first approach creating stunning interfaces with exceptional user experience.',
-    features: ['Figma Design', 'Design Systems', 'User Research', 'Prototyping', 'Accessibility (WCAG)'],
-    color: 'from-pink-500 to-rose-600',
-    bg: 'bg-pink-50',
-    text: 'text-pink-600',
-  },
-  {
-    icon: ShoppingCart,
-    title: 'E-Commerce Solutions',
-    slug: 'ecommerce-solutions',
-    desc: 'Complete e-commerce platforms with payment integration, inventory, and analytics.',
-    features: ['Custom E-Commerce', 'Payment Gateway', 'Inventory Management', 'Order Tracking', 'Multi-currency'],
-    color: 'from-cyan-500 to-teal-600',
-    bg: 'bg-cyan-50',
-    text: 'text-cyan-600',
-  },
-  {
-    icon: Brain,
-    title: 'AI/ML Solutions',
-    slug: 'ai-ml-solutions',
-    desc: 'Leverage the power of artificial intelligence and machine learning for your business.',
-    features: ['Custom ML Models', 'ChatBots', 'Computer Vision', 'NLP', 'AI Integration'],
-    color: 'from-indigo-500 to-blue-600',
-    bg: 'bg-indigo-50',
-    text: 'text-indigo-600',
-  },
-  {
-    icon: Cloud,
-    title: 'Cloud Infrastructure',
-    slug: 'cloud-infrastructure',
-    desc: 'Robust cloud architecture on AWS, GCP, and Azure with DevOps best practices.',
-    features: ['AWS/GCP/Azure', 'Docker & Kubernetes', 'CI/CD Pipelines', 'Auto Scaling', 'Security Hardening'],
-    color: 'from-sky-500 to-cyan-600',
-    bg: 'bg-sky-50',
-    text: 'text-sky-600',
-  },
-  {
-    icon: Settings,
-    title: 'Custom Business Software',
-    slug: 'custom-software',
-    desc: 'Bespoke enterprise software solutions tailored precisely to your workflow and business needs.',
-    features: ['Process Automation', 'ERP Integration', 'Custom Dashboards', 'Reporting Tools', 'Legacy Migration'],
-    color: 'from-gray-600 to-slate-700',
-    bg: 'bg-gray-50',
-    text: 'text-gray-700',
-  },
+interface ServiceItem {
+  _id: string;
+  title: string;
+  slug: string;
+  shortDescription: string;
+  icon?: string;
+  features: string[];
+}
+
+const CARD_GRADIENTS = [
+  'from-green-500 to-emerald-600',
+  'from-blue-500 to-sky-600',
+  'from-violet-500 to-purple-600',
+  'from-amber-500 to-orange-600',
+  'from-pink-500 to-rose-600',
+  'from-cyan-500 to-teal-600',
+  'from-indigo-500 to-blue-600',
+  'from-sky-500 to-cyan-600',
+  'from-gray-600 to-slate-700',
+];
+
+const FEATURE_COLORS = [
+  'text-emerald-600',
+  'text-blue-600',
+  'text-violet-600',
+  'text-amber-600',
+  'text-pink-600',
+  'text-cyan-600',
+  'text-indigo-600',
+  'text-sky-600',
+  'text-gray-700',
 ];
 
 const process = [
@@ -108,6 +48,15 @@ const process = [
 ];
 
 export default function ServicesPageClient() {
+  const [services, setServices] = useState<ServiceItem[]>([]);
+
+  useEffect(() => {
+    fetch('/api/services')
+      .then(r => r.json())
+      .then(d => { if (d.success) setServices(d.data); })
+      .catch(() => {});
+  }, []);
+
   return (
     <main>
       {/* Hero */}
@@ -137,35 +86,46 @@ export default function ServicesPageClient() {
       <section className="py-24 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {services.map((service, i) => (
-              <motion.div
-                key={service.slug}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: (i % 3) * 0.1 }}
-              >
-                <Link href={`/services/${service.slug}`}
-                  className="group block bg-white rounded-2xl p-7 border border-gray-100 hover:shadow-xl hover:border-transparent transition-all duration-300 h-full">
-                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${service.color} flex items-center justify-center mb-5`}>
-                    <service.icon className="w-6 h-6 text-white" />
-                  </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">{service.title}</h3>
-                  <p className="text-gray-500 text-sm leading-relaxed mb-5">{service.desc}</p>
-                  <ul className="space-y-2 mb-6">
-                    {service.features.slice(0, 4).map(f => (
-                      <li key={f} className="flex items-center gap-2 text-sm text-gray-600">
-                        <CheckCircle className={`w-4 h-4 shrink-0 ${service.text}`} />
-                        {f}
-                      </li>
-                    ))}
-                  </ul>
-                  <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-blue-600 group-hover:gap-2.5 transition-all">
-                    Learn More <ArrowRight className="w-4 h-4" />
-                  </span>
-                </Link>
-              </motion.div>
-            ))}
+            {services.map((service, i) => {
+              const gradient = CARD_GRADIENTS[i % CARD_GRADIENTS.length];
+              const featureColor = FEATURE_COLORS[i % FEATURE_COLORS.length];
+              return (
+                <motion.div
+                  key={service._id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: (i % 3) * 0.1 }}
+                >
+                  <Link href={`/services/${service.slug}`}
+                    className="group block bg-white rounded-2xl p-7 border border-gray-100 hover:shadow-xl hover:border-transparent transition-all duration-300 h-full">
+                    <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${gradient} flex items-center justify-center mb-5 overflow-hidden`}>
+                      {service.icon ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={service.icon} alt={service.title} className="w-8 h-8 object-contain" />
+                      ) : (
+                        <span className="text-white text-xl font-bold">{service.title.charAt(0)}</span>
+                      )}
+                    </div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">{service.title}</h3>
+                    <p className="text-gray-500 text-sm leading-relaxed mb-5">{service.shortDescription}</p>
+                    {service.features.length > 0 && (
+                      <ul className="space-y-2 mb-6">
+                        {service.features.slice(0, 4).map(f => (
+                          <li key={f} className="flex items-center gap-2 text-sm text-gray-600">
+                            <CheckCircle className={`w-4 h-4 shrink-0 ${featureColor}`} />
+                            {f}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                    <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-blue-600 group-hover:gap-2.5 transition-all">
+                      Learn More <ArrowRight className="w-4 h-4" />
+                    </span>
+                  </Link>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </section>

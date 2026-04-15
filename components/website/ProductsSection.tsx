@@ -1,34 +1,36 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { Download, Star, ArrowRight, Package } from 'lucide-react';
 
-const products = [
-  {
-    name: 'NextJS Admin Dashboard',
-    slug: 'nextjs-admin-dashboard',
-    desc: 'Production-ready admin dashboard with analytics, dark mode, and more.',
-    price: 29,
-    originalPrice: 49,
-    downloads: 124,
-    rating: 4.8,
-    tags: ['Next.js', 'TypeScript', 'Tailwind'],
-    license: 'paid',
-  },
-  {
-    name: 'React Component Library',
-    slug: 'react-component-library',
-    desc: '50+ accessible React components with TypeScript and Storybook.',
-    price: 0,
-    downloads: 1250,
-    rating: 4.6,
-    tags: ['React', 'TypeScript', 'Storybook'],
-    license: 'free',
-  },
-];
+interface ProductItem {
+  _id: string;
+  name: string;
+  slug: string;
+  shortDescription: string;
+  coverImage?: string;
+  price: number;
+  discountPrice?: number;
+  techStack: string[];
+  license: 'free' | 'paid' | 'freemium';
+  downloads: number;
+  rating: number;
+}
 
 export default function ProductsSection() {
+  const [products, setProducts] = useState<ProductItem[]>([]);
+
+  useEffect(() => {
+    fetch('/api/products')
+      .then(r => r.json())
+      .then(d => { if (d.success) setProducts(d.data); })
+      .catch(() => {});
+  }, []);
+
+  if (products.length === 0) return null;
+
   return (
     <section className="py-24 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -48,9 +50,9 @@ export default function ProductsSection() {
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {products.map((product, i) => (
+          {products.slice(0, 4).map((product, i) => (
             <motion.div
-              key={product.slug}
+              key={product._id}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -58,37 +60,54 @@ export default function ProductsSection() {
               className="group bg-gradient-to-br from-gray-50 to-white border border-gray-200 rounded-2xl p-8 hover:shadow-xl transition-all duration-300"
             >
               <div className="flex items-start justify-between mb-4">
-                <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-                  <Package className="w-6 h-6 text-blue-600" />
-                </div>
+                {product.coverImage ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={product.coverImage} alt={product.name} className="w-12 h-12 rounded-xl object-cover" />
+                ) : (
+                  <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                    <Package className="w-6 h-6 text-blue-600" />
+                  </div>
+                )}
                 <div className="text-right">
                   {product.license === 'free' ? (
                     <span className="bg-emerald-100 text-emerald-700 text-xs font-bold px-3 py-1 rounded-full">FREE</span>
                   ) : (
                     <div>
-                      <span className="text-gray-400 line-through text-sm">${product.originalPrice}</span>
-                      <span className="text-2xl font-bold text-gray-900 ml-2">${product.price}</span>
+                      {product.discountPrice ? (
+                        <>
+                          <span className="text-gray-400 line-through text-sm">₹{product.price}</span>
+                          <span className="text-2xl font-bold text-gray-900 ml-2">₹{product.discountPrice}</span>
+                        </>
+                      ) : (
+                        <span className="text-2xl font-bold text-gray-900">₹{product.price}</span>
+                      )}
                     </div>
                   )}
                 </div>
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-2">{product.name}</h3>
-              <p className="text-gray-500 text-sm mb-4">{product.desc}</p>
-              <div className="flex flex-wrap gap-2 mb-5">
-                {product.tags.map((tag) => (
-                  <span key={tag} className="bg-gray-100 text-gray-600 text-xs px-3 py-1 rounded-full">{tag}</span>
-                ))}
-              </div>
+              <p className="text-gray-500 text-sm mb-4">{product.shortDescription}</p>
+              {product.techStack.length > 0 && (
+                <div className="flex flex-wrap gap-2 mb-5">
+                  {product.techStack.slice(0, 4).map((tag) => (
+                    <span key={tag} className="bg-gray-100 text-gray-600 text-xs px-3 py-1 rounded-full">{tag}</span>
+                  ))}
+                </div>
+              )}
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4 text-sm text-gray-500">
-                  <span className="flex items-center gap-1">
-                    <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
-                    {product.rating}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Download className="w-4 h-4" />
-                    {product.downloads.toLocaleString()}
-                  </span>
+                  {product.rating > 0 && (
+                    <span className="flex items-center gap-1">
+                      <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
+                      {product.rating}
+                    </span>
+                  )}
+                  {product.downloads > 0 && (
+                    <span className="flex items-center gap-1">
+                      <Download className="w-4 h-4" />
+                      {product.downloads.toLocaleString()}
+                    </span>
+                  )}
                 </div>
                 <Link
                   href={`/products/${product.slug}`}
