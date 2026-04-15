@@ -10,8 +10,16 @@ export async function GET(req: NextRequest) {
 
   try {
     await connectDB();
-    const services = await Service.find().sort({ order: 1 });
-    return NextResponse.json({ success: true, data: services });
+    const { searchParams } = new URL(req.url);
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = parseInt(searchParams.get('limit') || '50');
+    const total = await Service.countDocuments();
+    const services = await Service.find().sort({ order: 1 }).skip((page - 1) * limit).limit(limit);
+    return NextResponse.json({
+      success: true,
+      data: services,
+      pagination: { page, limit, total, pages: Math.ceil(total / limit) },
+    });
   } catch (error) {
     console.error('GET /api/admin/services error:', error);
     return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });

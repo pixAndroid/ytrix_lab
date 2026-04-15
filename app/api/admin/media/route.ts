@@ -26,29 +26,36 @@ export async function POST(req: NextRequest) {
   try {
     await connectDB();
     const formData = await req.formData();
-    const file = formData.get('file') as File;
-    if (!file) {
+    const files = formData.getAll('files') as File[];
+    const singleFile = formData.get('file') as File | null;
+    const allFiles = files.length > 0 ? files : singleFile ? [singleFile] : [];
+
+    if (allFiles.length === 0) {
       return NextResponse.json({ success: false, error: 'No file provided' }, { status: 400 });
     }
 
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-    const filename = `${Date.now()}-${file.name.replace(/\s+/g, '-')}`;
     const uploadDir = path.join(process.cwd(), 'public', 'uploads');
-
     await mkdir(uploadDir, { recursive: true });
-    await writeFile(path.join(uploadDir, filename), buffer);
 
-    const media = await Media.create({
-      filename,
-      originalName: file.name,
-      mimeType: file.type,
-      size: file.size,
-      url: `/uploads/${filename}`,
-      folder: 'general',
-    });
+    const created = [];
+    for (const file of allFiles) {
+      const bytes = await file.arrayBuffer();
+      const buffer = Buffer.from(bytes);
+      const filename = `${Date.now()}-${file.name.replace(/\s+/g, '-')}`;
+      await writeFile(path.join(uploadDir, filename), buffer);
 
-    return NextResponse.json({ success: true, data: media }, { status: 201 });
+      const media = await Media.create({
+        filename,
+        originalName: file.name,
+        mimeType: file.type,
+        size: file.size,
+        url: `/uploads/${filename}`,
+        folder: 'general',
+      });
+      created.push(media);
+    }
+
+    return NextResponse.json({ success: true, data: created.length === 1 ? created[0] : created }, { status: 201 });
   } catch (error) {
     console.error(error);
     return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
