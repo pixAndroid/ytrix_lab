@@ -4,12 +4,13 @@ import Blog from '@/models/Blog';
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
+    const { slug } = await params;
     await connectDB();
     const blog = await Blog.findOneAndUpdate(
-      { slug: params.slug, status: 'published' },
+      { slug: slug, status: 'published' },
       { $inc: { views: 1 } },
       { new: true }
     );

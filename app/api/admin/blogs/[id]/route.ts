@@ -6,14 +6,15 @@ import { calculateReadTime } from '@/lib/utils';
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const admin = authenticateAdmin(req);
   if (!admin) return unauthorized();
 
+  const { id } = await params;
   try {
     await connectDB();
-    const blog = await Blog.findById(params.id);
+    const blog = await Blog.findById(id);
     if (!blog) return NextResponse.json({ success: false, error: 'Blog not found' }, { status: 404 });
     return NextResponse.json({ success: true, data: blog });
   } catch (error) {
@@ -24,17 +25,18 @@ export async function GET(
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const admin = authenticateAdmin(req);
   if (!admin) return unauthorized();
 
+  const { id } = await params;
   try {
     await connectDB();
     const body = await req.json();
     if (body.content) body.readTime = calculateReadTime(body.content);
 
-    const blog = await Blog.findByIdAndUpdate(params.id, body, { new: true, runValidators: true });
+    const blog = await Blog.findByIdAndUpdate(id, body, { new: true, runValidators: true });
     if (!blog) return NextResponse.json({ success: false, error: 'Blog not found' }, { status: 404 });
     return NextResponse.json({ success: true, data: blog });
   } catch (error) {
@@ -45,14 +47,15 @@ export async function PUT(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const admin = authenticateAdmin(req);
   if (!admin) return unauthorized();
 
+  const { id } = await params;
   try {
     await connectDB();
-    const blog = await Blog.findByIdAndDelete(params.id);
+    const blog = await Blog.findByIdAndDelete(id);
     if (!blog) return NextResponse.json({ success: false, error: 'Blog not found' }, { status: 404 });
     return NextResponse.json({ success: true, message: 'Blog deleted successfully' });
   } catch (error) {

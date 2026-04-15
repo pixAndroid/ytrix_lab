@@ -5,13 +5,17 @@ import Media from '@/models/Media';
 import { unlink } from 'fs/promises';
 import path from 'path';
 
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   const admin = authenticateAdmin(req);
   if (!admin) return unauthorized();
 
+  const { id } = await params;
   try {
     await connectDB();
-    const media = await Media.findByIdAndDelete(params.id);
+    const media = await Media.findByIdAndDelete(id);
     if (!media) {
       return NextResponse.json({ success: false, error: 'Media not found' }, { status: 404 });
     }

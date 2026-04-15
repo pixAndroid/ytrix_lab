@@ -6,9 +6,7 @@ const nextConfig = {
       { protocol: 'http', hostname: '**' },
     ],
   },
-  experimental: {
-    serverComponentsExternalPackages: ['mongoose'],
-  },
+  serverExternalPackages: ['mongoose'],
 };
 
 module.exports = nextConfig;
