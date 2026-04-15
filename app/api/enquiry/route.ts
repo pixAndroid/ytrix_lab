@@ -33,7 +33,12 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true, data: enquiry, message: 'Enquiry submitted successfully' }, { status: 201 });
   } catch (error) {
-    console.error('POST /api/enquiry error:', error);
-    return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    console.error('POST /api/enquiry error:', message);
+    const isDev = process.env.NODE_ENV === 'development';
+    return NextResponse.json(
+      { success: false, error: isDev ? message : 'Failed to submit enquiry. Please try again.' },
+      { status: 500 }
+    );
   }
 }

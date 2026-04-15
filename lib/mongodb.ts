@@ -1,6 +1,12 @@
 import mongoose from 'mongoose';
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/ytrix_lab';
+const rawUri = process.env.MONGODB_URI;
+
+if (!rawUri) {
+  throw new Error('Please define the MONGODB_URI environment variable in .env');
+}
+
+const MONGODB_URI: string = rawUri;
 
 interface MongooseCache {
   conn: typeof mongoose | null;
