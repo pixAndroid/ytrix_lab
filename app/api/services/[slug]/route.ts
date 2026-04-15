@@ -4,11 +4,12 @@ import Service from '@/models/Service';
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
+    const { slug } = await params;
     await connectDB();
-    const service = await Service.findOne({ slug: params.slug, status: 'active' });
+    const service = await Service.findOne({ slug: slug, status: 'active' });
     if (!service) {
       return NextResponse.json({ success: false, error: 'Service not found' }, { status: 404 });
     }

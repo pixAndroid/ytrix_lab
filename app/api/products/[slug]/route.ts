@@ -4,11 +4,12 @@ import Product from '@/models/Product';
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
+    const { slug } = await params;
     await connectDB();
-    const product = await Product.findOne({ slug: params.slug, status: 'active' });
+    const product = await Product.findOne({ slug: slug, status: 'active' });
     if (!product) {
       return NextResponse.json({ success: false, error: 'Product not found' }, { status: 404 });
     }

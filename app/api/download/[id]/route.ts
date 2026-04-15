@@ -4,11 +4,12 @@ import Product from '@/models/Product';
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+    const { id } = await params;
   try {
     await connectDB();
-    const product = await Product.findById(params.id);
+    const product = await Product.findById(id);
 
     if (!product) {
       return NextResponse.json({ success: false, error: 'Product not found' }, { status: 404 });
@@ -25,7 +26,7 @@ export async function GET(
       return NextResponse.json({ success: false, error: 'Download not available' }, { status: 404 });
     }
 
-    await Product.findByIdAndUpdate(params.id, { $inc: { downloads: 1 } });
+    await Product.findByIdAndUpdate(id, { $inc: { downloads: 1 } });
 
     return NextResponse.redirect(product.downloadUrl);
   } catch (error) {
