@@ -51,7 +51,6 @@ const ProductSchema = new Schema<IProductDoc>(
   { timestamps: true }
 );
 
-ProductSchema.index({ slug: 1 });
 ProductSchema.index({ status: 1 });
 ProductSchema.index({ category: 1 });
 ProductSchema.index({ license: 1 });
