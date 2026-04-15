@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { authenticateAdmin, unauthorized } from '@/lib/auth';
 import connectDB from '@/lib/mongodb';
 import Media from '@/models/Media';
-import cloudinary from '@/lib/cloudinary';
+import { deleteFile } from '@/lib/upload';
 
 export async function DELETE(
   req: NextRequest,
@@ -19,12 +19,8 @@ export async function DELETE(
       return NextResponse.json({ success: false, error: 'Media not found' }, { status: 404 });
     }
 
-    // Try to delete the asset from Cloudinary
-    try {
-      await cloudinary.uploader.destroy(media.filename);
-    } catch {
-      // Asset may not exist on Cloudinary, ignore error
-    }
+    // Delete the file from local storage
+    await deleteFile(media.filename);
 
     return NextResponse.json({ success: true, message: 'Media deleted' });
   } catch (error) {

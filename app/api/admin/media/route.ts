@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { authenticateAdmin, unauthorized } from '@/lib/auth';
 import connectDB from '@/lib/mongodb';
 import Media from '@/models/Media';
-import cloudinary from '@/lib/cloudinary';
+import { saveFile } from '@/lib/upload';
 
 export async function GET(req: NextRequest) {
   const admin = authenticateAdmin(req);
@@ -35,25 +35,14 @@ export async function POST(req: NextRequest) {
 
     const created = [];
     for (const file of allFiles) {
-      const bytes = await file.arrayBuffer();
-      const buffer = Buffer.from(bytes);
-
-      const result = await new Promise<{ public_id: string; secure_url: string }>((resolve, reject) => {
-        cloudinary.uploader.upload_stream(
-          { folder: 'ytrix_lab', resource_type: 'auto' },
-          (error, result) => {
-            if (error || !result) return reject(error ?? new Error('Upload failed'));
-            resolve(result);
-          }
-        ).end(buffer);
-      });
+      const { filename, url } = await saveFile(file);
 
       const media = await Media.create({
-        filename: result.public_id, // stores Cloudinary public_id for later deletion
+        filename,
         originalName: file.name,
         mimeType: file.type,
         size: file.size,
-        url: result.secure_url,
+        url,
         folder: 'general',
       });
       created.push(media);
