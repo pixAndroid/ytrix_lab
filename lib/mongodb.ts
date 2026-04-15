@@ -27,7 +27,14 @@ async function connectDB(): Promise<typeof mongoose> {
     });
   }
 
-  cached.conn = await cached.promise;
+  try {
+    cached.conn = await cached.promise;
+  } catch (err) {
+    cached.conn = null;
+    cached.promise = null;
+    throw err;
+  }
+
   return cached.conn;
 }
 
