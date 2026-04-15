@@ -2,8 +2,12 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Save, ArrowLeft, Image as ImageIcon } from 'lucide-react';
+import { Save, ArrowLeft, Image as ImageIcon, X } from 'lucide-react';
 import { BLOG_CATEGORIES } from '@/lib/constants';
+import dynamic from 'next/dynamic';
+import ImagePickerModal from '@/components/admin/ImagePickerModal';
+
+const RichTextEditor = dynamic(() => import('@/components/admin/RichTextEditor'), { ssr: false });
 
 interface BlogFormData {
   title: string;
@@ -29,6 +33,7 @@ export default function BlogForm({ initialData, mode }: BlogFormProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [coverPickerOpen, setCoverPickerOpen] = useState(false);
   const [form, setForm] = useState<BlogFormData>({
     title: initialData?.title || '',
     slug: initialData?.slug || '',
@@ -90,7 +95,8 @@ export default function BlogForm({ initialData, mode }: BlogFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <>
+      <form onSubmit={handleSubmit} className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <button
@@ -165,14 +171,11 @@ export default function BlogForm({ initialData, mode }: BlogFormProps) {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">Content *</label>
-              <textarea
-                name="content"
+              <RichTextEditor
                 value={form.content}
-                onChange={handleChange}
-                required
-                rows={20}
-                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y text-sm font-mono leading-relaxed"
-                placeholder="Write your blog content here... (Markdown supported)"
+                onChange={val => setForm(prev => ({ ...prev, content: val }))}
+                placeholder="Write your blog content here..."
+                minHeight={400}
               />
             </div>
           </div>
@@ -247,24 +250,31 @@ export default function BlogForm({ initialData, mode }: BlogFormProps) {
             <h3 className="font-semibold text-white flex items-center gap-2">
               <ImageIcon className="w-4 h-4" /> Featured Image
             </h3>
-            <div>
-              <input
-                name="coverImage"
-                value={form.coverImage}
-                onChange={handleChange}
-                className="w-full px-3 py-2.5 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-                placeholder="Image URL or upload path"
-              />
-            </div>
-            {form.coverImage && (
-              <div className="rounded-xl overflow-hidden">
+            {form.coverImage ? (
+              <div className="relative">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={form.coverImage} alt="Preview" className="w-full h-40 object-cover" />
+                <img src={form.coverImage} alt="Cover" className="w-full h-36 rounded-xl object-cover border border-gray-700" />
+                <button type="button" onClick={() => setForm(p => ({ ...p, coverImage: '' }))}
+                  className="absolute top-2 right-2 w-6 h-6 bg-red-600 rounded-full flex items-center justify-center text-white">
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            ) : (
+              <div className="w-full h-36 bg-gray-800 border-2 border-dashed border-gray-700 rounded-xl flex items-center justify-center">
+                <ImageIcon className="w-8 h-8 text-gray-600" />
               </div>
             )}
+            <button type="button" onClick={() => setCoverPickerOpen(true)}
+              className="w-full py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 text-sm rounded-xl transition-colors">
+              {form.coverImage ? 'Change Featured Image' : 'Pick Featured Image'}
+            </button>
           </div>
         </div>
       </div>
     </form>
+
+    <ImagePickerModal open={coverPickerOpen} onClose={() => setCoverPickerOpen(false)}
+      onSelect={url => setForm(p => ({ ...p, coverImage: url }))} title="Pick Featured Image" />
+  </>
   );
 }

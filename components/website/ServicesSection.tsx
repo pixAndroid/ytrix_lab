@@ -1,28 +1,56 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { Globe, Smartphone, Brain, Cloud, Palette, Settings, ArrowRight } from 'lucide-react';
+import { CheckCircle, ArrowRight } from 'lucide-react';
 
-const services = [
-  { icon: Globe, title: 'Web Development', desc: 'Scalable web apps with Next.js, React, and Node.js', href: '/services/web-development', color: 'blue' },
-  { icon: Smartphone, title: 'Mobile Apps', desc: 'Native and cross-platform iOS & Android apps', href: '/services/mobile-app-development', color: 'violet' },
-  { icon: Brain, title: 'AI/ML Solutions', desc: 'Intelligent automation powered by machine learning', href: '/services/ai-ml-solutions', color: 'emerald' },
-  { icon: Cloud, title: 'Cloud Infrastructure', desc: 'Scalable cloud architecture on AWS, GCP & Azure', href: '/services/cloud-infrastructure', color: 'sky' },
-  { icon: Palette, title: 'UI/UX Design', desc: 'Beautiful, accessible interfaces users love', href: '/services/ui-ux-design', color: 'pink' },
-  { icon: Settings, title: 'DevOps & Automation', desc: 'CI/CD pipelines and infrastructure automation', href: '/services/devops-automation', color: 'amber' },
+interface ServiceItem {
+  _id: string;
+  title: string;
+  slug: string;
+  shortDescription: string;
+  icon?: string;
+  features: string[];
+  order: number;
+}
+
+const CARD_GRADIENTS = [
+  'from-green-500 to-emerald-600',
+  'from-blue-500 to-sky-600',
+  'from-violet-500 to-purple-600',
+  'from-amber-500 to-orange-600',
+  'from-pink-500 to-rose-600',
+  'from-cyan-500 to-teal-600',
+  'from-indigo-500 to-blue-600',
+  'from-sky-500 to-cyan-600',
+  'from-gray-600 to-slate-700',
 ];
 
-const colorMap: Record<string, string> = {
-  blue: 'bg-blue-50 text-blue-600 group-hover:bg-blue-600 group-hover:text-white',
-  violet: 'bg-violet-50 text-violet-600 group-hover:bg-violet-600 group-hover:text-white',
-  emerald: 'bg-emerald-50 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white',
-  sky: 'bg-sky-50 text-sky-600 group-hover:bg-sky-600 group-hover:text-white',
-  pink: 'bg-pink-50 text-pink-600 group-hover:bg-pink-600 group-hover:text-white',
-  amber: 'bg-amber-50 text-amber-600 group-hover:bg-amber-600 group-hover:text-white',
-};
+const FEATURE_COLORS = [
+  'text-emerald-600',
+  'text-blue-600',
+  'text-violet-600',
+  'text-amber-600',
+  'text-pink-600',
+  'text-cyan-600',
+  'text-indigo-600',
+  'text-sky-600',
+  'text-gray-700',
+];
 
 export default function ServicesSection() {
+  const [services, setServices] = useState<ServiceItem[]>([]);
+
+  useEffect(() => {
+    fetch('/api/services')
+      .then(r => r.json())
+      .then(d => { if (d.success) setServices(d.data); })
+      .catch(() => {});
+  }, []);
+
+  if (services.length === 0) return null;
+
   return (
     <section className="py-24 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -42,29 +70,48 @@ export default function ServicesSection() {
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {services.map((service, i) => (
-            <motion.div
-              key={service.title}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-            >
-              <Link
-                href={service.href}
-                className="group block p-8 bg-white rounded-2xl border border-gray-100 hover:border-transparent hover:shadow-xl transition-all duration-300 h-full"
+          {services.map((service, i) => {
+            const gradient = CARD_GRADIENTS[i % CARD_GRADIENTS.length];
+            const featureColor = FEATURE_COLORS[i % FEATURE_COLORS.length];
+            return (
+              <motion.div
+                key={service._id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: (i % 3) * 0.1 }}
               >
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-5 transition-colors ${colorMap[service.color]}`}>
-                  <service.icon className="w-6 h-6" />
-                </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">{service.title}</h3>
-                <p className="text-gray-500 text-sm leading-relaxed mb-4">{service.desc}</p>
-                <span className="inline-flex items-center gap-1 text-sm font-medium text-blue-600 group-hover:gap-2 transition-all">
-                  Learn more <ArrowRight className="w-4 h-4" />
-                </span>
-              </Link>
-            </motion.div>
-          ))}
+                <Link
+                  href={`/services/${service.slug}`}
+                  className="group block bg-white rounded-2xl p-7 border border-gray-100 hover:shadow-xl hover:border-transparent transition-all duration-300 h-full"
+                >
+                  <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${gradient} flex items-center justify-center mb-5 overflow-hidden`}>
+                    {service.icon ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={service.icon} alt={service.title} className="w-8 h-8 object-contain" />
+                    ) : (
+                      <span className="text-white text-xl font-bold">{service.title.charAt(0)}</span>
+                    )}
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">{service.title}</h3>
+                  <p className="text-gray-500 text-sm leading-relaxed mb-5">{service.shortDescription}</p>
+                  {service.features.length > 0 && (
+                    <ul className="space-y-2 mb-6">
+                      {service.features.slice(0, 4).map(f => (
+                        <li key={f} className="flex items-center gap-2 text-sm text-gray-600">
+                          <CheckCircle className={`w-4 h-4 shrink-0 ${featureColor}`} />
+                          {f}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-blue-600 group-hover:gap-2.5 transition-all">
+                    Learn More <ArrowRight className="w-4 h-4" />
+                  </span>
+                </Link>
+              </motion.div>
+            );
+          })}
         </div>
 
         <div className="text-center mt-12">

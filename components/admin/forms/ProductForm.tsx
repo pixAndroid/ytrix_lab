@@ -2,13 +2,18 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Save, ArrowLeft } from 'lucide-react';
+import { Save, ArrowLeft, Image as ImageIcon, X } from 'lucide-react';
+import dynamic from 'next/dynamic';
+import ImagePickerModal from '@/components/admin/ImagePickerModal';
+
+const RichTextEditor = dynamic(() => import('@/components/admin/RichTextEditor'), { ssr: false });
 
 interface ProductFormData {
   name: string;
   slug: string;
   shortDescription: string;
   description: string;
+  coverImage: string;
   category: string;
   price: number;
   discountPrice: number;
@@ -35,11 +40,13 @@ export default function ProductForm({ initialData, mode }: ProductFormProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [coverPickerOpen, setCoverPickerOpen] = useState(false);
   const [form, setForm] = useState<ProductFormData>({
     name: initialData?.name || '',
     slug: initialData?.slug || '',
     shortDescription: initialData?.shortDescription || '',
     description: initialData?.description || '',
+    coverImage: initialData?.coverImage || '',
     category: initialData?.category || '',
     price: initialData?.price || 0,
     discountPrice: initialData?.discountPrice || 0,
@@ -100,7 +107,8 @@ export default function ProductForm({ initialData, mode }: ProductFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <>
+      <form onSubmit={handleSubmit} className="space-y-6">
       <div className="flex items-center justify-between">
         <button type="button" onClick={() => router.push('/admin/products')}
           className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors text-sm">
@@ -141,9 +149,12 @@ export default function ProductForm({ initialData, mode }: ProductFormProps) {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">Full Description *</label>
-              <textarea name="description" value={form.description} onChange={handleChange} required rows={8}
-                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y text-sm"
-                placeholder="Detailed product description..." />
+              <RichTextEditor
+                value={form.description}
+                onChange={val => setForm(prev => ({ ...prev, description: val }))}
+                placeholder="Detailed product description..."
+                minHeight={280}
+              />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">Features (one per line)</label>
@@ -171,6 +182,28 @@ export default function ProductForm({ initialData, mode }: ProductFormProps) {
         </div>
 
         <div className="space-y-5">
+          {/* Cover Image */}
+          <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 space-y-4">
+            <h3 className="font-semibold text-white flex items-center gap-2"><ImageIcon className="w-4 h-4" /> Cover Image</h3>
+            {form.coverImage ? (
+              <div className="relative">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={form.coverImage} alt="Cover" className="w-full h-36 rounded-xl object-cover border border-gray-700" />
+                <button type="button" onClick={() => setForm(p => ({ ...p, coverImage: '' }))}
+                  className="absolute top-2 right-2 w-6 h-6 bg-red-600 rounded-full flex items-center justify-center text-white">
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            ) : (
+              <div className="w-full h-36 bg-gray-800 border-2 border-dashed border-gray-700 rounded-xl flex items-center justify-center">
+                <ImageIcon className="w-8 h-8 text-gray-600" />
+              </div>
+            )}
+            <button type="button" onClick={() => setCoverPickerOpen(true)}
+              className="w-full py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 text-sm rounded-xl transition-colors">
+              {form.coverImage ? 'Change Cover Image' : 'Pick Cover Image'}
+            </button>
+          </div>
           <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 space-y-4">
             <h3 className="font-semibold text-white">Pricing & Type</h3>
             <div>
@@ -246,5 +279,9 @@ export default function ProductForm({ initialData, mode }: ProductFormProps) {
         </div>
       </div>
     </form>
+
+    <ImagePickerModal open={coverPickerOpen} onClose={() => setCoverPickerOpen(false)}
+      onSelect={url => setForm(p => ({ ...p, coverImage: url }))} title="Pick Cover Image" />
+  </>
   );
 }
