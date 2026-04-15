@@ -2,8 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { authenticateAdmin, unauthorized } from '@/lib/auth';
 import connectDB from '@/lib/mongodb';
 import Media from '@/models/Media';
-import { unlink } from 'fs/promises';
-import path from 'path';
+import cloudinary from '@/lib/cloudinary';
 
 export async function DELETE(
   req: NextRequest,
@@ -20,12 +19,11 @@ export async function DELETE(
       return NextResponse.json({ success: false, error: 'Media not found' }, { status: 404 });
     }
 
-    // Try to delete the file from disk
+    // Try to delete the asset from Cloudinary
     try {
-      const filePath = path.join(process.cwd(), 'public', media.url);
-      await unlink(filePath);
+      await cloudinary.uploader.destroy(media.filename);
     } catch {
-      // File may not exist on disk, ignore error
+      // Asset may not exist on Cloudinary, ignore error
     }
 
     return NextResponse.json({ success: true, message: 'Media deleted' });

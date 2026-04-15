@@ -2,8 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { authenticateAdmin, unauthorized } from '@/lib/auth';
 import connectDB from '@/lib/mongodb';
 import Media from '@/models/Media';
-import { writeFile, mkdir } from 'fs/promises';
-import path from 'path';
+import cloudinary from '@/lib/cloudinary';
 
 export async function GET(req: NextRequest) {
   const admin = authenticateAdmin(req);
@@ -34,22 +33,27 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, error: 'No file provided' }, { status: 400 });
     }
 
-    const uploadDir = path.join(process.cwd(), 'public', 'uploads');
-    await mkdir(uploadDir, { recursive: true });
-
     const created = [];
     for (const file of allFiles) {
       const bytes = await file.arrayBuffer();
       const buffer = Buffer.from(bytes);
-      const filename = `${Date.now()}-${file.name.replace(/\s+/g, '-')}`;
-      await writeFile(path.join(uploadDir, filename), buffer);
+
+      const result = await new Promise<{ public_id: string; secure_url: string }>((resolve, reject) => {
+        cloudinary.uploader.upload_stream(
+          { folder: 'ytrix_lab', resource_type: 'auto' },
+          (error, result) => {
+            if (error || !result) return reject(error ?? new Error('Upload failed'));
+            resolve(result);
+          }
+        ).end(buffer);
+      });
 
       const media = await Media.create({
-        filename,
+        filename: result.public_id, // stores Cloudinary public_id for later deletion
         originalName: file.name,
         mimeType: file.type,
         size: file.size,
-        url: `/uploads/${filename}`,
+        url: result.secure_url,
         folder: 'general',
       });
       created.push(media);
