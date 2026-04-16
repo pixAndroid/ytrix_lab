@@ -43,7 +43,19 @@ const plans = [
   },
 ];
 
-export default function PricingSection() {
+interface Plan {
+  _id?: string;
+  title: string;
+  price: string;
+  label: string;
+  gradient: string;
+  features: string[];
+  cta: string;
+  highlighted: boolean;
+}
+
+export default function PricingSection({ plans: propPlans }: { plans?: Plan[] }) {
+  const activePlans = propPlans && propPlans.length > 0 ? propPlans : plans;
   return (
     <section className="py-24 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -64,7 +76,7 @@ export default function PricingSection() {
         </motion.div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {plans.map((plan, i) => (
+          {activePlans.map((plan, i) => (
             <motion.div
               key={plan.title}
               initial={{ opacity: 0, y: 20 }}

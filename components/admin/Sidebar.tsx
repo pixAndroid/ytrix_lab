@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import {
   LayoutDashboard, FileText, Briefcase, Package, Mail, BarChart3, Image, X, Zap,
+  DollarSign, HelpCircle, FolderOpen, Settings,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -16,6 +17,10 @@ const NAV_ITEMS = [
   { icon: Mail, label: 'Enquiries', href: '/admin/enquiries', badge: true },
   { icon: BarChart3, label: 'Analytics', href: '/admin/analytics' },
   { icon: Image, label: 'Media', href: '/admin/media' },
+  { icon: DollarSign, label: 'Pricing', href: '/admin/pricing' },
+  { icon: HelpCircle, label: 'FAQs', href: '/admin/faqs' },
+  { icon: FolderOpen, label: 'Portfolio', href: '/admin/portfolio' },
+  { icon: Settings, label: 'Home Settings', href: '/admin/home-settings' },
 ];
 
 interface SidebarProps {
