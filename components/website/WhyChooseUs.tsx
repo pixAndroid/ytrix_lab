@@ -1,20 +1,44 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Zap, Shield, Users, Award, Clock, HeartHandshake } from 'lucide-react';
+import { TrendingUp, MessageCircle, Sparkles, Search, LifeBuoy, BadgeDollarSign } from 'lucide-react';
 
 const reasons = [
-  { icon: Zap, title: 'Lightning Fast Delivery', desc: 'We deliver on time, every time. Our agile process ensures rapid iteration and quick deployments.' },
-  { icon: Shield, title: 'Enterprise Security', desc: 'Security-first approach with industry best practices, penetration testing, and compliance standards.' },
-  { icon: Users, title: 'Dedicated Team', desc: 'Your dedicated project team stays with you from ideation to launch and beyond.' },
-  { icon: Award, title: 'Proven Excellence', desc: '200+ successful projects with a 99% client satisfaction rate over 5+ years.' },
-  { icon: Clock, title: '24/7 Support', desc: 'Round-the-clock support and monitoring to keep your applications running smoothly.' },
-  { icon: HeartHandshake, title: 'Long-term Partnership', desc: 'We invest in your success. Most of our clients have been with us for 3+ years.' },
+  {
+    icon: TrendingUp,
+    title: 'Business-Focused Development',
+    desc: 'We build for outcomes, not just code. Every feature is tied to a real business goal.',
+  },
+  {
+    icon: MessageCircle,
+    title: 'Fast & Transparent Workflow',
+    desc: 'Clear timelines, regular updates, and open communication — no surprises, ever.',
+  },
+  {
+    icon: Sparkles,
+    title: 'Premium UI That Builds Trust',
+    desc: 'World-class design that makes your brand look credible from the first click.',
+  },
+  {
+    icon: Search,
+    title: 'SEO-Ready From Day One',
+    desc: 'Websites built with performance and discoverability baked in for long-term growth.',
+  },
+  {
+    icon: LifeBuoy,
+    title: 'Long-Term Support After Launch',
+    desc: 'We stay with you after go-live — maintenance, upgrades, and ongoing improvements.',
+  },
+  {
+    icon: BadgeDollarSign,
+    title: 'Affordable Pricing, Serious Quality',
+    desc: 'Premium-grade output at pricing that makes sense for startups and growing businesses.',
+  },
 ];
 
 export default function WhyChooseUs() {
   return (
-    <section className="py-24 bg-gray-50">
+    <section className="py-24 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -24,10 +48,11 @@ export default function WhyChooseUs() {
         >
           <span className="text-blue-600 font-semibold text-sm uppercase tracking-wider">Why Yantrix Labs</span>
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mt-2 mb-4">
-            The <span className="gradient-text">Yantrix</span> Advantage
+            Why Businesses Choose{' '}
+            <span className="gradient-text">Yantrix Labs</span>
           </h2>
           <p className="text-xl text-gray-500 max-w-2xl mx-auto">
-            We don&apos;t just write code — we craft digital solutions that deliver measurable business value
+            We don&apos;t just write code — we build digital products that drive measurable growth.
           </p>
         </motion.div>
 
@@ -39,7 +64,7 @@ export default function WhyChooseUs() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="flex gap-4 p-6 bg-white rounded-2xl border border-gray-100 hover:shadow-lg transition-shadow"
+              className="flex gap-4 p-6 bg-gray-50 rounded-2xl border border-gray-100 hover:shadow-lg transition-shadow"
             >
               <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center shrink-0">
                 <reason.icon className="w-5 h-5 text-blue-600" />

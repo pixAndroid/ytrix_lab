@@ -2,7 +2,8 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { ArrowRight, MessageSquare } from 'lucide-react';
+import { ArrowRight, MessageCircle } from 'lucide-react';
+import { WHATSAPP_LINK } from '@/lib/constants';
 
 export default function CTASection() {
   return (
@@ -20,26 +21,28 @@ export default function CTASection() {
           </div>
           <div className="relative">
             <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
-              Ready to Build Something Amazing?
+              Ready to Build Something Great?
             </h2>
             <p className="text-blue-100 text-xl mb-10 max-w-2xl mx-auto">
-              Let&apos;s discuss your project and create a solution that drives real results for your business.
+              Let&apos;s turn your idea into a high-performing digital product.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/contact"
                 className="group inline-flex items-center gap-2 px-8 py-4 bg-white text-blue-600 font-bold rounded-xl hover:bg-blue-50 transition-colors shadow-lg"
               >
-                <MessageSquare className="w-5 h-5" />
-                Start a Conversation
+                <MessageCircle className="w-5 h-5" />
+                Get Free Consultation
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
-              <Link
-                href="/services"
-                className="inline-flex items-center gap-2 px-8 py-4 border-2 border-white/50 text-white font-bold rounded-xl hover:border-white transition-colors"
+              <a
+                href={WHATSAPP_LINK}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-8 py-4 border-2 border-white/50 text-white font-bold rounded-xl hover:border-white hover:bg-white/10 transition-colors"
               >
-                Explore Services
-              </Link>
+                WhatsApp Us
+              </a>
             </div>
           </div>
         </motion.div>

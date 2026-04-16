@@ -3,23 +3,28 @@ import HeroSection from '@/components/website/HeroSection';
 import TrustedBrands from '@/components/website/TrustedBrands';
 import ServicesSection from '@/components/website/ServicesSection';
 import WhyChooseUs from '@/components/website/WhyChooseUs';
-import ProductsSection from '@/components/website/ProductsSection';
+import ProcessSection from '@/components/website/ProcessSection';
+import PortfolioPreview from '@/components/website/PortfolioPreview';
+import PricingSection from '@/components/website/PricingSection';
 import BlogSection from '@/components/website/BlogSection';
-import ToolsSection from '@/components/website/ToolsSection';
 import TestimonialsSection from '@/components/website/TestimonialsSection';
+import FAQSection from '@/components/website/FAQSection';
 import CTASection from '@/components/website/CTASection';
+import HomepageContactSection from '@/components/website/HomepageContactSection';
 
 export const metadata: Metadata = {
-  title: 'Yantrix Labs - Global Software Development Company',
+  title: 'Yantrix Labs — Mobile App & Web Development Company',
   description:
-    'Yantrix Labs builds enterprise-grade web, mobile, and SaaS solutions. Android, iOS, Web Development, UI/UX Design for global businesses.',
+    'Yantrix Labs builds Android apps, iOS apps, websites, and custom software for startups and businesses. Fast delivery, premium UI, and ongoing support.',
   keywords: [
     'software development company',
+    'android app development',
+    'iOS app development',
+    'web development company',
     'mobile app development',
-    'android app developer',
-    'iOS app developer',
-    'web development agency',
-    'SaaS development company',
+    'custom software solutions',
+    'UI UX design agency',
+    'startup MVP development',
   ],
 };
 
@@ -30,11 +35,14 @@ export default function HomePage() {
       <TrustedBrands />
       <ServicesSection />
       <WhyChooseUs />
-      <ProductsSection />
-      <BlogSection />
-      <ToolsSection />
+      <ProcessSection />
+      <PortfolioPreview />
+      <PricingSection />
       <TestimonialsSection />
+      <FAQSection />
       <CTASection />
+      <HomepageContactSection />
+      <BlogSection />
     </>
   );
 }
