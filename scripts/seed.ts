@@ -1,5 +1,9 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
+import PricingModel from '../models/Pricing';
+import FAQModel from '../models/FAQ';
+import PortfolioModel from '../models/Portfolio';
+import HomeSettingsModel from '../models/HomeSettings';
 
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/ytrix_lab';
 
@@ -161,6 +165,83 @@ async function main() {
   await Blog.deleteMany({});
   await Blog.insertMany(blogs);
   console.log('✓ Blogs seeded');
+
+  // Seed Pricing
+  const Pricing = PricingModel;
+
+  const pricingPlans = [
+    {
+      title: 'Starter Website', price: '₹9,999', label: 'Starting from',
+      gradient: 'from-blue-500 to-sky-600',
+      features: ['Up to 5 pages', 'Mobile responsive', 'Contact form', 'Basic SEO setup'],
+      cta: 'Get Started', highlighted: false, order: 1, status: 'active',
+    },
+    {
+      title: 'Business Website', price: '₹19,999', label: 'Starting from',
+      gradient: 'from-violet-500 to-purple-600',
+      features: ['Up to 15 pages', 'Blog / CMS', 'WhatsApp integration', 'Advanced SEO', 'Analytics setup'],
+      cta: 'Get Started', highlighted: true, order: 2, status: 'active',
+    },
+    {
+      title: 'Android App', price: '₹29,999', label: 'Starting from',
+      gradient: 'from-emerald-500 to-teal-600',
+      features: ['Native Android', 'User auth', 'Admin panel', 'Play Store publish', '3 months support'],
+      cta: 'Get Started', highlighted: false, order: 3, status: 'active',
+    },
+    {
+      title: 'Custom Software', price: 'Custom Quote', label: 'Tailored to your goals',
+      gradient: 'from-amber-500 to-orange-600',
+      features: ['CRM / ERP / SaaS', 'Full-stack development', 'Dedicated team', 'Ongoing support', 'Enterprise-grade'],
+      cta: 'Request Quote', highlighted: false, order: 4, status: 'active',
+    },
+  ];
+  await Pricing.deleteMany({});
+  await Pricing.insertMany(pricingPlans);
+  console.log('✓ Pricing seeded');
+
+  // Seed FAQs
+  const FAQ = FAQModel;
+
+  const faqData = [
+    { question: 'How long does a website take?', answer: 'Most business websites are live within 7–14 days. Larger or more complex projects may take 3–6 weeks.', order: 1, status: 'active' },
+    { question: 'Do you build mobile apps?', answer: 'Yes — we build native Android and iOS apps as well as cross-platform solutions for startups and businesses of all sizes.', order: 2, status: 'active' },
+    { question: 'Do you provide support after launch?', answer: 'Absolutely. We offer ongoing maintenance, upgrade plans, and dedicated support packages so your product keeps performing.', order: 3, status: 'active' },
+    { question: 'Can you redesign old websites?', answer: 'Yes. We modernize outdated websites with fresh design and optimized code, improving performance, SEO, and conversions.', order: 4, status: 'active' },
+    { question: 'Do you work with startups?', answer: 'Startups are our specialty. We help founders move from idea to MVP quickly and affordably, with a foundation that scales.', order: 5, status: 'active' },
+    { question: 'What is your development process?', answer: 'Discovery → Design → Development → Testing → Launch → Support. We keep you informed and involved at every stage.', order: 6, status: 'active' },
+  ];
+  await FAQ.deleteMany({});
+  await FAQ.insertMany(faqData);
+  console.log('✓ FAQs seeded');
+
+  // Seed Portfolio
+  const Portfolio = PortfolioModel;
+
+  const portfolioData = [
+    { title: 'Restaurant Ordering App', category: 'Android App', gradient: 'from-orange-400 to-red-500', order: 1, status: 'active' },
+    { title: 'Employee Attendance Platform', category: 'Web Dashboard', gradient: 'from-blue-500 to-indigo-600', order: 2, status: 'active' },
+    { title: 'E-commerce Website', category: 'Web Development', gradient: 'from-emerald-400 to-teal-600', order: 3, status: 'active' },
+    { title: 'Coupon Management App', category: 'Android & iOS', gradient: 'from-violet-500 to-purple-600', order: 4, status: 'active' },
+    { title: 'Service Booking Dashboard', category: 'Custom Software', gradient: 'from-pink-500 to-rose-600', order: 5, status: 'active' },
+    { title: 'Startup MVP Platform', category: 'MVP Development', gradient: 'from-cyan-500 to-blue-600', order: 6, status: 'active' },
+  ];
+  await Portfolio.deleteMany({});
+  await Portfolio.insertMany(portfolioData);
+  console.log('✓ Portfolio seeded');
+
+  // Seed HomeSettings
+  const HomeSettings = HomeSettingsModel;
+
+  await HomeSettings.deleteMany({});
+  await HomeSettings.create({
+    stats: [
+      { value: '50+', label: 'Projects Delivered' },
+      { value: '10+', label: 'Industries Served' },
+      { value: '99%', label: 'Client Satisfaction' },
+      { value: '6+', label: 'Years Experience' },
+    ],
+  });
+  console.log('✓ HomeSettings seeded');
 
   console.log('\n✅ Database seeded successfully!');
   await mongoose.disconnect();

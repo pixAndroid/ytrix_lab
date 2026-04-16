@@ -31,8 +31,17 @@ const faqs = [
   },
 ];
 
-export default function FAQSection() {
+interface FAQItem {
+  _id?: string;
+  question: string;
+  answer: string;
+}
+
+export default function FAQSection({ faqs: propFaqs }: { faqs?: FAQItem[] }) {
   const [open, setOpen] = useState<number | null>(null);
+  const activeFaqs = propFaqs && propFaqs.length > 0
+    ? propFaqs.map(f => ({ q: f.question, a: f.answer }))
+    : faqs;
 
   return (
     <section className="py-24 bg-white">
@@ -53,7 +62,7 @@ export default function FAQSection() {
         </motion.div>
 
         <div className="space-y-3">
-          {faqs.map((faq, i) => (
+          {activeFaqs.map((faq, i) => (
             <motion.div
               key={i}
               initial={{ opacity: 0, y: 10 }}

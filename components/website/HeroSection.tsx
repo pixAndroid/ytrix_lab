@@ -4,7 +4,19 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { ArrowRight, CheckCircle, Smartphone } from 'lucide-react';
 
-export default function HeroSection() {
+interface HeroStat {
+  value: string;
+  label: string;
+}
+
+export default function HeroSection({ stats: propStats }: { stats?: HeroStat[] }) {
+  const defaultStats = [
+    { value: '50+', label: 'Projects Delivered' },
+    { value: '10+', label: 'Industries Served' },
+    { value: '99%', label: 'Client Satisfaction' },
+    { value: '6+', label: 'Years Experience' },
+  ];
+  const activeStats = propStats && propStats.length > 0 ? propStats : defaultStats;
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900">
       {/* Background effects */}
@@ -98,12 +110,7 @@ export default function HeroSection() {
             transition={{ duration: 0.8, delay: 0.6 }}
             className="mt-14 grid grid-cols-2 md:grid-cols-4 gap-8"
           >
-            {[
-              { value: '50+', label: 'Projects Delivered' },
-              { value: '10+', label: 'Industries Served' },
-              { value: '99%', label: 'Client Satisfaction' },
-              { value: '6+', label: 'Years Experience' },
-            ].map((stat) => (
+            {activeStats.map((stat) => (
               <div key={stat.label} className="text-center">
                 <div className="text-3xl font-bold text-white">{stat.value}</div>
                 <div className="text-sm text-gray-400 mt-1">{stat.label}</div>

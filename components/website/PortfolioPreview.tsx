@@ -37,7 +37,15 @@ const portfolio = [
   },
 ];
 
-export default function PortfolioPreview() {
+interface PortfolioItem {
+  _id?: string;
+  title: string;
+  category: string;
+  gradient: string;
+}
+
+export default function PortfolioPreview({ items: propItems }: { items?: PortfolioItem[] }) {
+  const activeItems = propItems && propItems.length > 0 ? propItems : portfolio;
   return (
     <section className="py-24 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -57,7 +65,7 @@ export default function PortfolioPreview() {
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {portfolio.map((item, i) => (
+          {activeItems.map((item, i) => (
             <motion.div
               key={item.title}
               initial={{ opacity: 0, y: 20 }}
