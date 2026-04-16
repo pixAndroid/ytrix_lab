@@ -14,12 +14,12 @@ export const NAV_ITEMS = [
 ];
 
 export const SERVICES_LIST = [
+  'Android App Development',
+  'iOS App Development',
   'Web Development',
-  'Mobile App Development',
-  'AI/ML Solutions',
-  'Cloud Infrastructure',
   'UI/UX Design',
-  'DevOps & Automation',
+  'Custom Software Solutions',
+  'MVP for Startups',
 ];
 
 export const SOCIAL_LINKS = {
@@ -47,10 +47,10 @@ export const BLOG_CATEGORIES = [
 ];
 
 export const BUDGET_RANGES = [
-  'Under $1,000',
-  '$1,000 - $5,000',
-  '$5,000 - $10,000',
-  '$10,000 - $25,000',
-  '$25,000 - $50,000',
-  'Above $50,000',
+  'Under ₹10,000',
+  '₹10,000 – ₹25,000',
+  '₹25,000 – ₹50,000',
+  '₹50,000 – ₹1,00,000',
+  'Above ₹1,00,000',
+  'Custom / Discuss',
 ];

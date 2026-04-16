@@ -5,28 +5,31 @@ import { Star, Quote } from 'lucide-react';
 
 const testimonials = [
   {
-    name: 'Sarah Chen',
-    role: 'CTO',
-    company: 'TechFlow Inc.',
-    content: 'Yantrix Labs delivered our e-commerce platform ahead of schedule. The code quality is exceptional and the team was always responsive.',
-    rating: 5,
-    avatar: 'SC',
-  },
-  {
-    name: 'Marcus Williams',
+    name: 'Arjun Mehta',
     role: 'Founder',
-    company: 'StartupAI',
-    content: "Their AI integration transformed our product. The ML models they built increased our accuracy by 40%. Outstanding technical expertise.",
+    company: 'FoodFleet India',
+    content:
+      'Yantrix Labs delivered our restaurant ordering app faster than expected and it looks world-class. Our orders went up 40% within a month.',
     rating: 5,
-    avatar: 'MW',
+    avatar: 'AM',
   },
   {
-    name: 'Priya Sharma',
-    role: 'Product Manager',
-    company: 'GlobalFintech',
-    content: 'We rebuilt our entire mobile app with Yantrix Labs. The React Native app they built has 4.9 stars on the App Store. Highly recommended!',
+    name: 'Priya Nair',
+    role: 'Operations Head',
+    company: 'StaffSync',
+    content:
+      'Excellent communication, modern design, and reliable development support. They built our employee attendance platform exactly as we envisioned.',
     rating: 5,
-    avatar: 'PS',
+    avatar: 'PN',
+  },
+  {
+    name: 'Rohan Kapoor',
+    role: 'CEO',
+    company: 'LaunchPad Startup',
+    content:
+      'They helped us launch our app idea professionally and on budget. The UI is premium and our investors were genuinely impressed.',
+    rating: 5,
+    avatar: 'RK',
   },
 ];
 
@@ -45,12 +48,13 @@ export default function TestimonialsSection() {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <span className="text-blue-400 font-semibold text-sm uppercase tracking-wider">Testimonials</span>
+          <span className="text-blue-400 font-semibold text-sm uppercase tracking-wider">Client Stories</span>
           <h2 className="text-4xl md:text-5xl font-bold text-white mt-2 mb-4">
-            What Our <span className="bg-gradient-to-r from-blue-400 to-violet-400 bg-clip-text text-transparent">Clients Say</span>
+            What Clients{' '}
+            <span className="bg-gradient-to-r from-blue-400 to-violet-400 bg-clip-text text-transparent">Say</span>
           </h2>
           <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-            Don&apos;t just take our word for it — hear from our satisfied clients
+            Real results from real businesses. Here&apos;s what our clients have experienced.
           </p>
         </motion.div>
 
