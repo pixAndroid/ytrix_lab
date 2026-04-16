@@ -92,8 +92,7 @@ async function saveFileLocal(file: File): Promise<{ filename: string; url: strin
   const bytes = await file.arrayBuffer();
   await fs.promises.writeFile(filepath, Buffer.from(bytes));
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, '') ?? '';
-  return { filename, url: `${appUrl}/uploads/${filename}` };
+  return { filename, url: `/uploads/${filename}` };
 }
 
 async function deleteFileLocal(filename: string): Promise<void> {
