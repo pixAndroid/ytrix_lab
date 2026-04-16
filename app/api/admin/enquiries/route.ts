@@ -13,8 +13,20 @@ export async function GET(req: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '20');
     const status = searchParams.get('status');
 
+    const search = searchParams.get('search');
+
     const query: Record<string, unknown> = {};
     if (status) query.status = status;
+    if (search) {
+      // Escape special regex characters to prevent unintended matching or ReDoS
+      const escaped = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      query.$or = [
+        { name: { $regex: escaped, $options: 'i' } },
+        { email: { $regex: escaped, $options: 'i' } },
+        { subject: { $regex: escaped, $options: 'i' } },
+        { company: { $regex: escaped, $options: 'i' } },
+      ];
+    }
 
     const total = await Enquiry.countDocuments(query);
     const enquiries = await Enquiry.find(query)
