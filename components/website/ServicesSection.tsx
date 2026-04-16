@@ -172,21 +172,28 @@ export default function ServicesSection() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: (i % 3) * 0.1 }}
-                className="group bg-white rounded-2xl p-7 border border-gray-100 hover:shadow-xl hover:border-transparent transition-all duration-300"
               >
-                <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${service.gradient} flex items-center justify-center mb-5`}>
-                  <service.Icon className="w-7 h-7 text-white" />
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">{service.title}</h3>
-                <p className="text-gray-500 text-sm leading-relaxed mb-5">{service.description}</p>
-                <ul className="space-y-2 mb-6">
-                  {service.features.map(f => (
-                    <li key={f} className="flex items-center gap-2 text-sm text-gray-600">
-                      <CheckCircle className={`w-4 h-4 shrink-0 ${FEATURE_COLORS[i % FEATURE_COLORS.length]}`} />
-                      {f}
-                    </li>
-                  ))}
-                </ul>
+                <Link
+                  href="/contact"
+                  className="group block bg-white rounded-2xl p-7 border border-gray-100 hover:shadow-xl hover:border-transparent transition-all duration-300 h-full"
+                >
+                  <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${service.gradient} flex items-center justify-center mb-5`}>
+                    <service.Icon className="w-7 h-7 text-white" />
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">{service.title}</h3>
+                  <p className="text-gray-500 text-sm leading-relaxed mb-5">{service.description}</p>
+                  <ul className="space-y-2 mb-6">
+                    {service.features.map(f => (
+                      <li key={f} className="flex items-center gap-2 text-sm text-gray-600">
+                        <CheckCircle className={`w-4 h-4 shrink-0 ${FEATURE_COLORS[i % FEATURE_COLORS.length]}`} />
+                        {f}
+                      </li>
+                    ))}
+                  </ul>
+                  <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-blue-600 group-hover:gap-2.5 transition-all">
+                    Get Started <ArrowRight className="w-4 h-4" />
+                  </span>
+                </Link>
               </motion.div>
             ))}
           </div>

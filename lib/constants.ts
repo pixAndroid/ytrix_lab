@@ -22,6 +22,9 @@ export const SERVICES_LIST = [
   'MVP for Startups',
 ];
 
+export const WHATSAPP_NUMBER = '+919876543210';
+export const WHATSAPP_LINK = 'https://wa.me/919876543210';
+
 export const SOCIAL_LINKS = {
   twitter: 'https://twitter.com/yantrixlabs',
   linkedin: 'https://linkedin.com/company/yantrixlabs',
