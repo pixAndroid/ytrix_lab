@@ -56,6 +56,7 @@ export default function RichTextEditor({ value, onChange, placeholder = 'Start w
   const linkInputRef = useRef<HTMLInputElement>(null);
 
   const editor = useEditor({
+    immediatelyRender: false,
     extensions: [
       StarterKit.configure({ codeBlock: { HTMLAttributes: { class: 'bg-gray-900 rounded p-3 font-mono text-sm' } } }),
       Underline,
