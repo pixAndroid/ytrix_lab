@@ -81,7 +81,7 @@ export default function ServiceForm({ initialData, mode }: ServiceFormProps) {
       const data = await res.json();
       if (data.success) {
         setSuccess(mode === 'create' ? 'Service created!' : 'Service updated!');
-        setTimeout(() => router.push('/admin/services'), 1500);
+        setTimeout(() => { router.refresh(); router.push('/admin/services'); }, 1500);
       } else {
         setError(data.error || 'Operation failed');
       }

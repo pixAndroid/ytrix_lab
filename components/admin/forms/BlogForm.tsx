@@ -83,7 +83,7 @@ export default function BlogForm({ initialData, mode }: BlogFormProps) {
 
       if (data.success) {
         setSuccess(mode === 'create' ? 'Blog post created successfully!' : 'Blog post updated successfully!');
-        setTimeout(() => router.push('/admin/blogs'), 1500);
+        setTimeout(() => { router.refresh(); router.push('/admin/blogs'); }, 1500);
       } else {
         setError(data.error || 'Operation failed');
       }
