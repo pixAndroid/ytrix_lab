@@ -95,7 +95,7 @@ export default function ProductForm({ initialData, mode }: ProductFormProps) {
       const data = await res.json();
       if (data.success) {
         setSuccess(mode === 'create' ? 'Product created!' : 'Product updated!');
-        setTimeout(() => router.push('/admin/products'), 1500);
+        setTimeout(() => { router.refresh(); router.push('/admin/products'); }, 1500);
       } else {
         setError(data.error || 'Operation failed');
       }
