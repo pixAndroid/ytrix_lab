@@ -12,13 +12,12 @@ import FAQSection from '@/components/website/FAQSection';
 import CTASection from '@/components/website/CTASection';
 import HomepageContactSection from '@/components/website/HomepageContactSection';
 import connectDB from '@/lib/mongodb';
-import Pricing from '@/models/Pricing';
-import FAQ from '@/models/FAQ';
-import Portfolio from '@/models/Portfolio';
-import HomeSettings from '@/models/HomeSettings';
+import Pricing, { IPricingDoc } from '@/models/Pricing';
+import FAQ, { IFAQDoc } from '@/models/FAQ';
+import Portfolio, { IPortfolioDoc } from '@/models/Portfolio';
+import HomeSettings, { IHomeStat } from '@/models/HomeSettings';
 
-
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: 'Yantrix Labs — Mobile App & Web Development Company',
@@ -37,26 +36,26 @@ export const metadata: Metadata = {
 };
 
 export default async function HomePage() {
-  await connectDB();
+  let pricingDocs: IPricingDoc[] = [];
+  let faqDocs: IFAQDoc[] = [];
+  let portfolioDocs: IPortfolioDoc[] = [];
+  let homeSettingsRaw: { stats?: IHomeStat[] } | null = null;
 
-  const [pricingDocs, faqDocs, portfolioDocs, homeSettingsDoc] = await Promise.all([
-    Pricing.find({ status: 'active' }).sort({ order: 1 }).lean().catch((err) => {
-      console.error('Failed to fetch pricing:', err);
-      return [];
-    }),
-    FAQ.find({ status: 'active' }).sort({ order: 1 }).lean().catch((err) => {
-      console.error('Failed to fetch FAQs:', err);
-      return [];
-    }),
-    Portfolio.find({ status: 'active' }).sort({ order: 1 }).lean().catch((err) => {
-      console.error('Failed to fetch portfolio:', err);
-      return [];
-    }),
-    HomeSettings.findOne().lean().catch((err) => {
-      console.error('Failed to fetch home settings:', err);
-      return null;
-    }),
-  ]);
+  try {
+    await connectDB();
+    const [p, f, po, hs] = await Promise.all([
+      Pricing.find({ status: 'active' }).sort({ order: 1 }).lean<IPricingDoc[]>().catch(() => []),
+      FAQ.find({ status: 'active' }).sort({ order: 1 }).lean<IFAQDoc[]>().catch(() => []),
+      Portfolio.find({ status: 'active' }).sort({ order: 1 }).lean<IPortfolioDoc[]>().catch(() => []),
+      HomeSettings.findOne().lean<{ stats?: IHomeStat[] }>().catch(() => null),
+    ]);
+    pricingDocs = p;
+    faqDocs = f;
+    portfolioDocs = po;
+    homeSettingsRaw = hs;
+  } catch {
+    // DB unavailable during build — all sections fall back to static data
+  }
 
   const pricingPlans = pricingDocs.map(p => ({
     _id: String(p._id),
@@ -82,8 +81,7 @@ export default async function HomePage() {
     gradient: p.gradient,
   }));
 
-  const settingsDoc = homeSettingsDoc as { stats?: { value: string; label: string }[] } | null;
-  const heroStats = settingsDoc?.stats ?? [];
+  const heroStats: IHomeStat[] = homeSettingsRaw?.stats ?? [];
 
   return (
     <>
