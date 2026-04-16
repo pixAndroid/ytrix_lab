@@ -1,5 +1,9 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
+import PricingModel from '../models/Pricing';
+import FAQModel from '../models/FAQ';
+import PortfolioModel from '../models/Portfolio';
+import HomeSettingsModel from '../models/HomeSettings';
 
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/ytrix_lab';
 
@@ -163,11 +167,7 @@ async function main() {
   console.log('✓ Blogs seeded');
 
   // Seed Pricing
-  const PricingSchema = new mongoose.Schema({
-    title: String, price: String, label: String, gradient: String,
-    features: [String], cta: String, highlighted: Boolean, order: Number, status: String,
-  }, { timestamps: true });
-  const Pricing = mongoose.models.Pricing || mongoose.model('Pricing', PricingSchema);
+  const Pricing = PricingModel;
 
   const pricingPlans = [
     {
@@ -200,10 +200,7 @@ async function main() {
   console.log('✓ Pricing seeded');
 
   // Seed FAQs
-  const FAQSchema = new mongoose.Schema({
-    question: String, answer: String, order: Number, status: String,
-  }, { timestamps: true });
-  const FAQ = mongoose.models.FAQ || mongoose.model('FAQ', FAQSchema);
+  const FAQ = FAQModel;
 
   const faqData = [
     { question: 'How long does a website take?', answer: 'Most business websites are live within 7–14 days. Larger or more complex projects may take 3–6 weeks.', order: 1, status: 'active' },
@@ -218,10 +215,7 @@ async function main() {
   console.log('✓ FAQs seeded');
 
   // Seed Portfolio
-  const PortfolioSchema = new mongoose.Schema({
-    title: String, category: String, gradient: String, imageUrl: String, link: String, order: Number, status: String,
-  }, { timestamps: true });
-  const Portfolio = mongoose.models.Portfolio || mongoose.model('Portfolio', PortfolioSchema);
+  const Portfolio = PortfolioModel;
 
   const portfolioData = [
     { title: 'Restaurant Ordering App', category: 'Android App', gradient: 'from-orange-400 to-red-500', order: 1, status: 'active' },
@@ -236,10 +230,7 @@ async function main() {
   console.log('✓ Portfolio seeded');
 
   // Seed HomeSettings
-  const HomeSettingsSchema = new mongoose.Schema({
-    stats: [{ value: String, label: String }],
-  }, { timestamps: true });
-  const HomeSettings = mongoose.models.HomeSettings || mongoose.model('HomeSettings', HomeSettingsSchema);
+  const HomeSettings = HomeSettingsModel;
 
   await HomeSettings.deleteMany({});
   await HomeSettings.create({

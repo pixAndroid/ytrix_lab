@@ -16,7 +16,7 @@ import Pricing from '@/models/Pricing';
 import FAQ from '@/models/FAQ';
 import Portfolio from '@/models/Portfolio';
 import HomeSettings from '@/models/HomeSettings';
-import type { IHomeSettingsDoc } from '@/models/HomeSettings';
+
 
 export const dynamic = 'force-dynamic';
 
@@ -82,7 +82,8 @@ export default async function HomePage() {
     gradient: p.gradient,
   }));
 
-  const heroStats = (homeSettingsDoc as Pick<IHomeSettingsDoc, 'stats'> | null)?.stats ?? [];
+  const settingsDoc = homeSettingsDoc as { stats?: { value: string; label: string }[] } | null;
+  const heroStats = settingsDoc?.stats ?? [];
 
   return (
     <>
