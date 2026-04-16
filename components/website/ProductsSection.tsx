@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { Download, Star, ArrowRight, Package } from 'lucide-react';
@@ -19,16 +18,11 @@ interface ProductItem {
   rating: number;
 }
 
-export default function ProductsSection() {
-  const [products, setProducts] = useState<ProductItem[]>([]);
+interface ProductsSectionProps {
+  products: ProductItem[];
+}
 
-  useEffect(() => {
-    fetch('/api/products')
-      .then(r => r.json())
-      .then(d => { if (d.success) setProducts(d.data); })
-      .catch(() => {});
-  }, []);
-
+export default function ProductsSection({ products }: ProductsSectionProps) {
   if (products.length === 0) return null;
 
   return (

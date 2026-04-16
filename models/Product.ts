@@ -22,6 +22,7 @@ export interface IProductDoc extends Document {
   reviewCount: number;
   seoTitle?: string;
   seoDescription?: string;
+  showOnHome: boolean;
 }
 
 const ProductSchema = new Schema<IProductDoc>(
@@ -47,6 +48,7 @@ const ProductSchema = new Schema<IProductDoc>(
     reviewCount: { type: Number, default: 0 },
     seoTitle: { type: String },
     seoDescription: { type: String },
+    showOnHome: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

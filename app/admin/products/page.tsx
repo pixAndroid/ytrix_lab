@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import Link from 'next/link';
-import { Plus, Edit, Trash2, Eye, Package, Search } from 'lucide-react';
+import { Plus, Edit, Trash2, Eye, Package, Search, Home } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
 
 interface Product {
@@ -16,6 +16,7 @@ interface Product {
   status: string;
   downloads: number;
   category: string;
+  showOnHome: boolean;
 }
 
 export default function AdminProductsPage() {
@@ -56,6 +57,19 @@ export default function AdminProductsPage() {
     });
     const data = await res.json();
     if (data.success) fetchProducts();
+  };
+
+  const toggleShowOnHome = async (id: string, current: boolean) => {
+    const token = localStorage.getItem('admin_token');
+    const res = await fetch(`/api/admin/products/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ showOnHome: !current }),
+    });
+    const data = await res.json();
+    if (data.success) {
+      setProducts(prev => prev.map(p => p._id === id ? { ...p, showOnHome: !current } : p));
+    }
   };
 
   return (
@@ -103,6 +117,7 @@ export default function AdminProductsPage() {
                     <th className="text-left px-6 py-4 text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
                     <th className="text-left px-6 py-4 text-xs font-medium text-gray-500 uppercase tracking-wider">License</th>
                     <th className="text-left px-6 py-4 text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">Downloads</th>
+                    <th className="text-left px-6 py-4 text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">Home</th>
                     <th className="text-right px-6 py-4 text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                   </tr>
                 </thead>
@@ -129,6 +144,20 @@ export default function AdminProductsPage() {
                         </span>
                       </td>
                       <td className="px-6 py-4 hidden lg:table-cell text-sm text-gray-400">{product.downloads}</td>
+                      <td className="px-6 py-4 hidden md:table-cell">
+                        <button
+                          type="button"
+                          onClick={() => toggleShowOnHome(product._id, product.showOnHome)}
+                          title={product.showOnHome ? 'Shown on home page' : 'Hidden from home page'}
+                          className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none ${
+                            product.showOnHome ? 'bg-blue-600' : 'bg-gray-600'
+                          }`}
+                        >
+                          <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${
+                            product.showOnHome ? 'translate-x-[18px]' : 'translate-x-[2px]'
+                          }`} />
+                        </button>
+                      </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center justify-end gap-2">
                           <a href={`/products/${product.slug}`} target="_blank" rel="noreferrer"

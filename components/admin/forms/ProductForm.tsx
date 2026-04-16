@@ -24,6 +24,7 @@ interface ProductFormData {
   version: string;
   license: 'free' | 'paid' | 'freemium';
   status: 'active' | 'inactive' | 'coming-soon';
+  showOnHome: boolean;
   seoTitle: string;
   seoDescription: string;
 }
@@ -57,6 +58,7 @@ export default function ProductForm({ initialData, mode }: ProductFormProps) {
     version: initialData?.version || '1.0.0',
     license: initialData?.license || 'free',
     status: initialData?.status || 'active',
+    showOnHome: initialData?.showOnHome ?? false,
     seoTitle: initialData?.seoTitle || '',
     seoDescription: initialData?.seoDescription || '',
   });
@@ -249,6 +251,23 @@ export default function ProductForm({ initialData, mode }: ProductFormProps) {
                 <option value="inactive">Inactive</option>
                 <option value="coming-soon">Coming Soon</option>
               </select>
+            </div>
+            <div className="flex items-center justify-between py-1">
+              <div>
+                <p className="text-sm font-medium text-gray-300">Show on Home Page</p>
+                <p className="text-xs text-gray-500 mt-0.5">Display this product in the homepage products section</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setForm(p => ({ ...p, showOnHome: !p.showOnHome }))}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
+                  form.showOnHome ? 'bg-blue-600' : 'bg-gray-600'
+                }`}
+              >
+                <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  form.showOnHome ? 'translate-x-6' : 'translate-x-1'
+                }`} />
+              </button>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">Version</label>

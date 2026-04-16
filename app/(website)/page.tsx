@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 import HeroSection from '@/components/website/HeroSection';
-import TrustedBrands from '@/components/website/TrustedBrands';
 import ServicesSection from '@/components/website/ServicesSection';
 import WhyChooseUs from '@/components/website/WhyChooseUs';
 import ProcessSection from '@/components/website/ProcessSection';
+import ProductsSection from '@/components/website/ProductsSection';
 import PortfolioPreview from '@/components/website/PortfolioPreview';
 import PricingSection from '@/components/website/PricingSection';
 import BlogSection from '@/components/website/BlogSection';
@@ -15,6 +15,7 @@ import connectDB from '@/lib/mongodb';
 import Pricing, { IPricingDoc } from '@/models/Pricing';
 import FAQ, { IFAQDoc } from '@/models/FAQ';
 import Portfolio, { IPortfolioDoc } from '@/models/Portfolio';
+import Product, { IProductDoc } from '@/models/Product';
 import HomeSettings, { IHomeStat } from '@/models/HomeSettings';
 
 export const revalidate = 60;
@@ -39,19 +40,22 @@ export default async function HomePage() {
   let pricingDocs: IPricingDoc[] = [];
   let faqDocs: IFAQDoc[] = [];
   let portfolioDocs: IPortfolioDoc[] = [];
+  let productDocs: IProductDoc[] = [];
   let homeSettingsRaw: { stats?: IHomeStat[] } | null = null;
 
   try {
     await connectDB();
-    const [p, f, po, hs] = await Promise.all([
+    const [p, f, po, pr, hs] = await Promise.all([
       Pricing.find({ status: 'active' }).sort({ order: 1 }).lean<IPricingDoc[]>().catch(() => []),
       FAQ.find({ status: 'active' }).sort({ order: 1 }).lean<IFAQDoc[]>().catch(() => []),
       Portfolio.find({ status: 'active' }).sort({ order: 1 }).lean<IPortfolioDoc[]>().catch(() => []),
+      Product.find({ status: 'active', showOnHome: true }).sort({ createdAt: -1 }).lean<IProductDoc[]>().catch(() => []),
       HomeSettings.findOne().lean<{ stats?: IHomeStat[] }>().catch(() => null),
     ]);
     pricingDocs = p;
     faqDocs = f;
     portfolioDocs = po;
+    productDocs = pr;
     homeSettingsRaw = hs;
   } catch {
     // DB unavailable during build — all sections fall back to static data
@@ -81,15 +85,29 @@ export default async function HomePage() {
     gradient: p.gradient,
   }));
 
+  const homeProducts = productDocs.map(p => ({
+    _id: String(p._id),
+    name: p.name,
+    slug: p.slug,
+    shortDescription: p.shortDescription,
+    coverImage: p.coverImage,
+    price: p.price,
+    discountPrice: p.discountPrice,
+    techStack: p.techStack,
+    license: p.license,
+    downloads: p.downloads,
+    rating: p.rating,
+  }));
+
   const heroStats: IHomeStat[] = homeSettingsRaw?.stats ?? [];
 
   return (
     <>
       <HeroSection stats={heroStats} />
-      <TrustedBrands />
       <ServicesSection />
       <WhyChooseUs />
       <ProcessSection />
+      <ProductsSection products={homeProducts} />
       <PortfolioPreview items={portfolioItems} />
       <PricingSection plans={pricingPlans} />
       <TestimonialsSection />
