@@ -89,6 +89,12 @@ export default function AdminDashboardPage() {
     fetchStats();
   }, [fetchStats]);
 
+  // Poll for updated stats every 30 seconds
+  useEffect(() => {
+    const interval = setInterval(fetchStats, 30_000);
+    return () => clearInterval(interval);
+  }, [fetchStats]);
+
   const statCards = [
     { icon: FileText, label: 'Blog Posts', value: stats.blogs, color: 'blue', href: '/admin/blogs' },
     { icon: Briefcase, label: 'Services', value: stats.services, color: 'violet', href: '/admin/services' },

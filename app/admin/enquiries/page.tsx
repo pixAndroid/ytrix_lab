@@ -60,6 +60,12 @@ export default function AdminEnquiriesPage() {
 
   useEffect(() => { fetchEnquiries(); }, [fetchEnquiries]);
 
+  // Poll for new enquiries every 30 seconds
+  useEffect(() => {
+    const interval = setInterval(fetchEnquiries, 30_000);
+    return () => clearInterval(interval);
+  }, [fetchEnquiries]);
+
   const updateStatus = async (id: string, status: string) => {
     const token = localStorage.getItem('admin_token');
     const res = await fetch(`/api/admin/enquiries/${id}`, {
