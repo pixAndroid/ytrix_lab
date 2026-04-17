@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { authenticateAdmin, unauthorized } from '@/lib/auth';
 import connectDB from '@/lib/mongodb';
 import Media from '@/models/Media';
-import { saveFile } from '@/lib/upload';
+import { saveFile, UploadValidationError } from '@/lib/upload';
 
 export async function GET(req: NextRequest) {
   const admin = authenticateAdmin(req);
@@ -51,6 +51,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true, data: created.length === 1 ? created[0] : created }, { status: 201 });
   } catch (error) {
     console.error(error);
+    if (error instanceof UploadValidationError) {
+      return NextResponse.json({ success: false, error: error.message }, { status: 400 });
+    }
     return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
   }
 }

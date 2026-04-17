@@ -16,7 +16,17 @@ const MIME_TO_EXT: Record<string, string> = {
   'video/mp4': '.mp4',
   'video/webm': '.webm',
   'application/pdf': '.pdf',
+  'application/zip': '.zip',
+  'application/x-zip-compressed': '.zip',
+  'application/x-zip': '.zip',
 };
+
+export class UploadValidationError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'UploadValidationError';
+  }
+}
 
 // ── Cloudinary (used in production when env vars are present) ──────────────
 function isCloudinaryConfigured(): boolean {
@@ -112,11 +122,11 @@ async function deleteFileLocal(filename: string): Promise<void> {
 export async function saveFile(file: File): Promise<{ filename: string; url: string }> {
   const ext = MIME_TO_EXT[file.type];
   if (!ext) {
-    throw new Error(`File type '${file.type}' is not allowed.`);
+    throw new UploadValidationError(`File type '${file.type}' is not allowed.`);
   }
 
   if (file.size > MAX_FILE_SIZE) {
-    throw new Error(`File size exceeds the maximum allowed size of ${MAX_FILE_SIZE / 1024 / 1024} MB.`);
+    throw new UploadValidationError(`File size exceeds the maximum allowed size of ${MAX_FILE_SIZE / 1024 / 1024} MB.`);
   }
 
   if (isCloudinaryConfigured()) {
