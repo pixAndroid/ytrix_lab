@@ -52,18 +52,23 @@ async function saveFileCloudinary(file: File): Promise<{ filename: string; url: 
   const bytes = await file.arrayBuffer();
   const buffer = Buffer.from(bytes);
 
-  const result = await new Promise<{ public_id: string; secure_url: string }>((resolve, reject) => {
-    const uploadStream = cloudinary.uploader.upload_stream(
-      { folder: 'ytrix_lab', resource_type: 'auto' },
-      (error, result) => {
-        if (error || !result) return reject(error ?? new Error('Cloudinary upload failed'));
-        resolve(result as { public_id: string; secure_url: string });
-      }
-    );
-    uploadStream.end(buffer);
-  });
+  try {
+    const result = await new Promise<{ public_id: string; secure_url: string }>((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        { folder: 'ytrix_lab', resource_type: 'auto' },
+        (error, result) => {
+          if (error || !result) return reject(error ?? new Error('Cloudinary upload failed'));
+          resolve(result as { public_id: string; secure_url: string });
+        }
+      );
+      uploadStream.end(buffer);
+    });
 
-  return { filename: result.public_id, url: result.secure_url };
+    return { filename: result.public_id, url: result.secure_url };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Unknown Cloudinary error';
+    throw new UploadValidationError(`Cloud storage upload failed: ${message}`);
+  }
 }
 
 async function deleteFileCloudinary(filename: string): Promise<void> {

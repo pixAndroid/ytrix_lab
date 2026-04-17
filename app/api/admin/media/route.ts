@@ -50,10 +50,11 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true, data: created.length === 1 ? created[0] : created }, { status: 201 });
   } catch (error) {
-    console.error(error);
+    console.error('[POST /api/admin/media]', error);
     if (error instanceof UploadValidationError) {
       return NextResponse.json({ success: false, error: error.message }, { status: 400 });
     }
-    return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
+    const message = error instanceof Error ? error.message : 'Internal server error';
+    return NextResponse.json({ success: false, error: message }, { status: 500 });
   }
 }
