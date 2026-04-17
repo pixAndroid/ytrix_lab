@@ -81,9 +81,10 @@ export default function ServiceDetailClient({ slug }: { slug: string }) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
             <div className="lg:col-span-2 prose prose-lg max-w-none">
-              <div className="text-gray-700 leading-relaxed whitespace-pre-wrap text-base">
-                {service.description}
-              </div>
+              <div
+                className="text-gray-700 leading-relaxed text-base"
+                dangerouslySetInnerHTML={{ __html: service.description }}
+              />
             </div>
 
             <div className="space-y-6">
