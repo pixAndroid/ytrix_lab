@@ -114,8 +114,8 @@ export default function RichTextEditor({ value, onChange, placeholder = 'Start w
       setLinkDialogOpen(false);
     } else {
       // Leaving HTML source mode: push raw HTML back into the editor
+      // (onChange was already called on every textarea keystroke, no need to call again)
       editor?.commands.setContent(htmlSourceValue);
-      onChange(htmlSourceValue);
     }
     setHtmlSourceMode(prev => !prev);
   };
