@@ -27,6 +27,7 @@ export default function AdminMediaPage() {
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [copied, setCopied] = useState<string | null>(null);
+  const [uploadError, setUploadError] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const fetchMedia = useCallback(async () => {
@@ -51,6 +52,7 @@ export default function AdminMediaPage() {
     const files = e.target.files;
     if (!files || files.length === 0) return;
     setUploading(true);
+    setUploadError(null);
     try {
       const token = localStorage.getItem('admin_token');
       const formData = new FormData();
@@ -61,9 +63,14 @@ export default function AdminMediaPage() {
         body: formData,
       });
       const data = await res.json();
-      if (data.success) fetchMedia();
+      if (data.success) {
+        fetchMedia();
+      } else {
+        setUploadError(data.error || 'Upload failed. Please try again.');
+      }
     } catch (err) {
       console.error(err);
+      setUploadError('Upload failed. Please check your connection and try again.');
     } finally {
       setUploading(false);
       if (fileRef.current) fileRef.current.value = '';
@@ -103,6 +110,15 @@ export default function AdminMediaPage() {
             </label>
           </div>
         </div>
+
+        {/* Upload Error */}
+        {uploadError && (
+          <div className="flex items-center gap-2 px-4 py-3 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-sm">
+            <span className="shrink-0" role="img" aria-label="Warning">⚠</span>
+            <span>{uploadError}</span>
+            <button onClick={() => setUploadError(null)} className="ml-auto shrink-0 hover:text-red-300 transition-colors">✕</button>
+          </div>
+        )}
 
         {/* Upload Drop Zone */}
         <div
